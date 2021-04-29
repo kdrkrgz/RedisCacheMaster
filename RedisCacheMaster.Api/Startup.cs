@@ -42,9 +42,7 @@ namespace RedisCacheMaster.Api
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "RedisCacheMaster.Api", Version = "v1" });
             });
 
-            services.AddDependencyResolvers(new ICoreModule[] {
-                new CoreModule()
-            });
+            services.AddDependencyResolvers();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

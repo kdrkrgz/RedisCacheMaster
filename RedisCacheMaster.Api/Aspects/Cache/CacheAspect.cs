@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.DependencyInjection;
+using Newtonsoft.Json;
+using RedisCacheMaster.Api.Models;
 using RedisCacheMaster.Api.Services;
 using RedisCacheMaster.Api.Utilities;
 using RedisCacheMaster.Api.Utilities.Interception;
@@ -32,7 +34,9 @@ namespace RedisCacheMaster.Api.Aspects.Cache
             var key = $"{methodName}({string.Join(",", arguments.Select(x => x?.ToString() ?? "<Null>"))})";
             if (_cacheManager.Exist(key).Result)
             {
-                invocation.ReturnValue = _cacheManager.GetCacheValueAsync(key);
+                var cacheData = _cacheManager.GetCacheValueAsync<List<Product>>(key);
+                // Result olarak genel bir tür içinde data dönülürse sorun kalmayacak.
+                invocation.ReturnValue = cacheData;
                 return;
             }
             invocation.Proceed();

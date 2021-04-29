@@ -6,6 +6,8 @@ using Autofac;
 using Autofac.Extras.DynamicProxy;
 using Castle.DynamicProxy;
 using Microsoft.Extensions.DependencyInjection;
+using RedisCacheMaster.Api.Business.Abstract;
+using RedisCacheMaster.Api.Business.Concrete;
 using RedisCacheMaster.Api.Controllers;
 using RedisCacheMaster.Api.Services;
 using RedisCacheMaster.Api.Utilities;
@@ -18,10 +20,8 @@ namespace RedisCacheMaster.Api.DependencyResolvers
         protected override void Load(ContainerBuilder builder)
         {
 
-            //builder.RegisterType<RedisServer>().SingleInstance();
-            //builder.RegisterType<RedisCacheManager>().As<ICacheService>().SingleInstance();
-            //builder.RegisterType<CacheController>().As<ICacheController>().SingleInstance();
-
+            builder.RegisterType<ProductRepository>().As<IProductRepository>().SingleInstance();
+            //builder.RegisterType<CacheController>().SingleInstance();
             var assembly = System.Reflection.Assembly.GetExecutingAssembly();
             builder.RegisterAssemblyTypes(assembly).AsImplementedInterfaces()
                 .EnableInterfaceInterceptors(new ProxyGenerationOptions()

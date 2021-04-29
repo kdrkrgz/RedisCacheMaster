@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using RedisCacheMaster.Api.DependencyResolvers;
+using RedisCacheMaster.Api.Services;
 using RedisCacheMaster.Api.Utilities;
 
 namespace RedisCacheMaster.Api.Extensions
@@ -12,14 +13,11 @@ namespace RedisCacheMaster.Api.Extensions
     {
 
         public static IServiceCollection AddDependencyResolvers
-            (this IServiceCollection serviceCollection, ICoreModule[] modules)
+            (this IServiceCollection services)
         {
-            foreach (var module in modules)
-            {
-                module.Load(serviceCollection);
-            }
-
-            return ServiceTool.Create(serviceCollection);
+            services.AddSingleton<RedisServer>();
+            services.AddSingleton<ICacheService, RedisCacheManager>();
+            return ServiceTool.Create(services);
         }
     }
 }

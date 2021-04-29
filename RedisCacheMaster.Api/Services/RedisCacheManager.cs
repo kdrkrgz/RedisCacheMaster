@@ -20,10 +20,10 @@ namespace RedisCacheMaster.Api.Services
         }
 
 
-        public async Task<string> GetCacheValueAsync(string key)
+        public async Task<T> GetCacheValueAsync<T>(string key)
         {
-            return await _redisServer.Database.StringGetAsync(key);
-            
+            var cacheData = await _redisServer.Database.StringGetAsync(key);
+            return JsonConvert.DeserializeObject<T>(cacheData);
         }
 
         public async Task SetCacheValueAsync<T>(string key, object data, int expirationTime = 600)
@@ -38,7 +38,7 @@ namespace RedisCacheMaster.Api.Services
             await _redisServer.Database.KeyDeleteAsync(key);
         }
 
-        public async Task RemoveCacheByPattern(string pattern)
+        public async Task RemoveCacheByPatternAsync(string pattern)
         {
             var redisCacheEntriesCollectionDefinition = typeof(RedisServer).GetProperty("EntriesCollection",
                 System.Reflection.BindingFlags.NonPublic
