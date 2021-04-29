@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace RedisCacheMaster.Api.Controllers
 {
@@ -19,13 +20,21 @@ namespace RedisCacheMaster.Api.Controllers
             _productRepository = productRepository;
         }
 
+        /// <summary>
+        /// Get products from ProductRepository and add returned data to redis cache with specific key
+        /// </summary>
+        [SwaggerOperation(Summary = "Get products from ProductRepository and add returned data to redis cache with specific key")]
         [HttpGet]
-        public async Task<IActionResult> Get()
+        public IActionResult Get()
         {
-            var products = _productRepository.GetProducts();
-            return Ok(products);
+            var result = _productRepository.GetProducts();
+            return Ok(result);
         }
 
+        /// <summary>
+        /// Push product to static products list in ProductRepository and clear redis cache data by given pattern
+        /// </summary>
+        [SwaggerOperation(Summary = "Push product to static products list in ProductRepository and clear redis cache data by given pattern")]
         [HttpPost]
         public IActionResult Post([FromBody] Product product)
         {

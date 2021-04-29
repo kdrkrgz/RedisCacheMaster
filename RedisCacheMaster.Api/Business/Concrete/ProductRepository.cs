@@ -2,6 +2,7 @@
 using RedisCacheMaster.Api.Business.Abstract;
 using RedisCacheMaster.Api.Models;
 using System.Collections.Generic;
+using RedisCacheMaster.Api.Utilities.Results;
 
 namespace RedisCacheMaster.Api.Business.Concrete
 {

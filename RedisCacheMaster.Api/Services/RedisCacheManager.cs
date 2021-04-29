@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
+using RedisCacheMaster.Api.Utilities.Results;
 using StackExchange.Redis;
 
 namespace RedisCacheMaster.Api.Services
@@ -40,24 +41,14 @@ namespace RedisCacheMaster.Api.Services
 
         public async Task RemoveCacheByPatternAsync(string pattern)
         {
-            var redisCacheEntriesCollectionDefinition = typeof(RedisServer).GetProperty("EntriesCollection",
-                System.Reflection.BindingFlags.NonPublic
-                | System.Reflection.BindingFlags.Instance);
-            var redisCacheEntriesCollection = redisCacheEntriesCollectionDefinition?.GetValue(_redisServer) as dynamic;
-
-            List<ICacheEntry> cacheCollectionValues = new List<ICacheEntry>();
-            foreach (var cacheItem in redisCacheEntriesCollection)
-            {
-                ICacheEntry cacheItemValue = cacheItem.GetType().GetProperty("Value").GetValue(cacheItem,null);
-                cacheCollectionValues.Add(cacheItemValue);
-            }
             var regex = new Regex(pattern, RegexOptions.Singleline |RegexOptions.Compiled | RegexOptions.IgnoreCase);
-            var keystoRemove = cacheCollectionValues.Where(d => regex.IsMatch(d.Key.ToString())).Select(d => d.Key)
-                .ToList();
-            foreach (var key in keystoRemove)
+            var redisKeys = _redisServer.Database.Multiplexer.GetServer("localhost:6379").Keys().ToList();
+            var removeKeys = redisKeys.Where(k => k.ToString().Contains(regex.ToString())).ToList();
+            foreach (var key in removeKeys)
             {
-                await _redisServer.Database.KeyDeleteAsync(key.ToString());
+                await _redisServer.Database.KeyDeleteAsync(key);
             }
+
         }
 
         public async Task<bool> Exist(string key)

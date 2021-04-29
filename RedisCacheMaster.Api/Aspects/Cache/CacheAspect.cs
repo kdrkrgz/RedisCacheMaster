@@ -12,6 +12,7 @@ using RedisCacheMaster.Api.Models;
 using RedisCacheMaster.Api.Services;
 using RedisCacheMaster.Api.Utilities;
 using RedisCacheMaster.Api.Utilities.Interception;
+using RedisCacheMaster.Api.Utilities.Results;
 
 namespace RedisCacheMaster.Api.Aspects.Cache
 {
@@ -36,7 +37,9 @@ namespace RedisCacheMaster.Api.Aspects.Cache
             {
                 var cacheData = _cacheManager.GetCacheValueAsync<List<Product>>(key);
                 // Result olarak genel bir tür içinde data dönülürse sorun kalmayacak.
-                invocation.ReturnValue = cacheData;
+                var result = cacheData.Result;
+
+                invocation.ReturnValue = result;
                 return;
             }
             invocation.Proceed();

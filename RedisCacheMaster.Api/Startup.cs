@@ -9,6 +9,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Threading;
@@ -40,6 +41,8 @@ namespace RedisCacheMaster.Api
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "RedisCacheMaster.Api", Version = "v1" });
+                var xmlPath = Path.Combine(AppContext.BaseDirectory, ($"{Assembly.GetExecutingAssembly().GetName().Name}.xml"));
+                c.IncludeXmlComments(xmlPath);
             });
 
             services.AddDependencyResolvers();

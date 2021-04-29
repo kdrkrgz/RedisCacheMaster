@@ -23,26 +23,18 @@ namespace RedisCacheMaster.Api.Controllers
             _cacheService = cacheService;
             _productRepository = productRepository;
         }
-
+        /// <summary>
+        /// Get specific value from Redis server
+        /// </summary>
+        /// <remarks>
+        /// You can check product cache with this key => RedisCacheMaster.Api.Business.Abstract.IProductRepository.GetProducts()
+        /// </remarks>
         [HttpGet("{key}")]
         public async Task<IActionResult> GetCacheData([FromRoute] string key)
         {
-            var data = "";//await _cacheService.GetCacheValueAsync<Product>(key);
+            var data = await _cacheService.GetCacheValueAsync<List<Product>>(key);
             return data == null ? (IActionResult)NotFound() : Ok(data);
         }
 
-        [HttpPost]
-        public async Task<IActionResult> SetCacheData([FromBody] CacheModel cacheRequest)
-        {
-            await _cacheService.SetCacheValueAsync<CacheModel>(cacheRequest.Key, cacheRequest.Value);
-            return Ok();
-        }
-
-        [HttpGet]
-        public IActionResult SetStaticCacheItem()
-        {
-            var products = _productRepository.GetProducts();
-            return Ok(products);
-        }
     }
 }
